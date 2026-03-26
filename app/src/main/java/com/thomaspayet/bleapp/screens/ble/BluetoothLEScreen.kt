@@ -1,6 +1,7 @@
 package com.thomaspayet.bleapp.screens.ble
 
 import android.annotation.SuppressLint
+import android.bluetooth.BluetoothDevice
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,12 +18,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bluetooth
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.thomaspayet.bleapp.ApplicationRoot
+import com.thomaspayet.bleapp.data.ble.BluetoothLEManager
 import com.thomaspayet.bleapp.ui.components.ListElement
 
 @SuppressLint("MissingPermission")
@@ -30,12 +33,15 @@ import com.thomaspayet.bleapp.ui.components.ListElement
 fun BluetoothLEScreen(
     modifier: Modifier = Modifier,
     bleViewModel: BluetoothLEViewModel = viewModel(),
-    onClickElementList: () -> Unit = {}
+    onClickElementList: (BluetoothDevice) -> Unit = {},
+    onConnectedDevice: (BluetoothDevice?) -> Unit = {}
 ) {
     // List of scanned device
     val scanItems by bleViewModel.scanItemsFlow.collectAsStateWithLifecycle()
     // Scanning state
     val isScanning by bleViewModel.isScanningFlow.collectAsStateWithLifecycle()
+    // Connection state
+    val isConnected by bleViewModel.isConnectedToDeviceFlow.collectAsStateWithLifecycle()
 
     Column(
         modifier = modifier.fillMaxSize(),
@@ -78,13 +84,12 @@ fun BluetoothLEScreen(
                     content = item.device.address,
                     image = Icons.Filled.Bluetooth,
                     onClick = {
-                        bleViewModel.connect(
-                            ApplicationRoot.getContext(),
-                            item.device
-                        )
-                        onClickElementList()
+                        onClickElementList(item.device)
                     }
                 )
+                if (isConnected) {
+                    onConnectedDevice(BluetoothLEManager.currentDevice)
+                }
             }
         }
     }

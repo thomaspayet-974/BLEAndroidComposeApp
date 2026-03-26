@@ -7,8 +7,6 @@ import androidx.compose.material.icons.filled.SsidChart
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
-import androidx.navigation.navDeepLink
-import org.jetbrains.annotations.Contract
 
 /**
  * Contract for information needed on every navigation destination
@@ -16,6 +14,8 @@ import org.jetbrains.annotations.Contract
 interface BleAppDestination {
     val icon: ImageVector
     val route: String
+    val screenTitle: String
+    val screenSubTitle: String?
 }
 
 /**
@@ -24,6 +24,8 @@ interface BleAppDestination {
 object Home : BleAppDestination {
     override val icon = Icons.Filled.Home
     override val route = "home"
+    override val screenTitle = "Home"
+    override val screenSubTitle = null
 }
 
 /**
@@ -32,6 +34,8 @@ object Home : BleAppDestination {
 object Bluetooth : BleAppDestination {
     override val icon = Icons.Filled.Bluetooth
     override val route = "bluetooth"
+    override val screenTitle = "Scan Bluetooth Device"
+    override val screenSubTitle = null
 }
 
 /**
@@ -40,6 +44,20 @@ object Bluetooth : BleAppDestination {
 object BluetoothLEDeviceDetail : BleAppDestination {
     override val icon = Icons.Filled.Bluetooth
     override val route = "ble_device_detail"
+    
+    // Using keys for arguments
+    const val DEVICE_NAME_ARG = "device_name"
+    const val DEVICE_ADDR_ARG = "device_addr"
+    
+    override val screenTitle = DEVICE_NAME_ARG
+    override val screenSubTitle = DEVICE_ADDR_ARG
+    
+    val routeWithArgs = "${route}/{$DEVICE_ADDR_ARG}/{$DEVICE_NAME_ARG}"
+    
+    val arguments = listOf(
+        navArgument(DEVICE_NAME_ARG) { type = NavType.StringType },
+        navArgument(DEVICE_ADDR_ARG) { type = NavType.StringType }
+    )
 }
 
 /**
@@ -48,6 +66,8 @@ object BluetoothLEDeviceDetail : BleAppDestination {
 object Charts : BleAppDestination {
     override val icon = Icons.Filled.SsidChart
     override val route = "charts"
+    override val screenTitle = "Charts"
+    override val screenSubTitle = null
 }
 
 /* Exemple with deepLink and arguments of navigation

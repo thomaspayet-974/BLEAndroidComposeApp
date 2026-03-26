@@ -15,36 +15,47 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.thomaspayet.bleapp.data.ble.BluetoothLEManager
 import com.thomaspayet.bleapp.ui.components.ListElement
 
 @SuppressLint("MissingPermission")
 @Composable
 fun BluetoothLEDeviceDetailScreen(
-    device: BluetoothDevice? = BluetoothLEManager.currentDevice,
+    bleViewModel : BluetoothLEViewModel = viewModel(),
+    deviceAddr: String = "00:00:00:00:00:00",
     isDeviceConnected: Boolean = BluetoothLEManager.currentDevice != null,
     onClickDisconnect: () -> Unit = {}
 ) {
-    Column {
-        //TODO: ajouter des widgets pour chaque Characteristic
-        ListElement(
-            title = device?.name ?: "Unknown device",
-            content = device?.address ?: "00:00:00:00:00:00",
-            image =
-                if(isDeviceConnected) Icons.Filled.BluetoothConnected
-                else Icons.Filled.BluetoothDisabled,
-            onClick = onClickDisconnect
-        )
-        Button(
-            onClick = onClickDisconnect,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        ) {
-            Row(horizontalArrangement = Arrangement.SpaceBetween) {
-                Image(
-                    imageVector = Icons.Filled.BluetoothDisabled,
-                    contentDescription = "Disconnect BluetoothLE device"
-                )
-                Text(text = "Disconnect")
+    val scannedDevices = bleViewModel.scanItemsFlow.collectAsStateWithLifecycle()
+    val selectedDevice = scannedDevices.value.find {
+        it.device.address == deviceAddr
+    }?.device
+    if (selectedDevice == null) {
+        onClickDisconnect()
+    } else {
+        Column {
+            //TODO: ajouter des widgets pour chaque Characteristic
+            ListElement(
+                title = selectedDevice.name,
+                content = selectedDevice.address,
+                image =
+                    if (isDeviceConnected) Icons.Filled.BluetoothConnected
+                    else Icons.Filled.BluetoothDisabled,
+                onClick = onClickDisconnect
+            )
+            Button(
+                onClick = onClickDisconnect,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            ) {
+                Row(horizontalArrangement = Arrangement.SpaceBetween) {
+                    Image(
+                        imageVector = Icons.Filled.BluetoothDisabled,
+                        contentDescription = "Disconnect BluetoothLE device"
+                    )
+                    Text(text = "Disconnect")
+                }
             }
         }
     }
