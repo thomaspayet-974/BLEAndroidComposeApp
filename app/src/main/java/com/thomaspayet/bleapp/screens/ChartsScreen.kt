@@ -28,7 +28,7 @@ fun ChartsScreen() {
         ) {
             Icon(
                 imageVector = Icons.Filled.SsidChart,
-                contentDescription = "Bluetooth",
+                contentDescription = "Charts",
                 tint = Color.LightGray,
                 modifier = Modifier.size(150.dp)
             )

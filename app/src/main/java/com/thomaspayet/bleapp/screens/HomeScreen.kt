@@ -28,7 +28,7 @@ fun HomeScreen() {
         ) {
             Icon(
                 imageVector = Icons.Filled.Home,
-                contentDescription = "Bluetooth",
+                contentDescription = "Home",
                 tint = Color.LightGray,
                 modifier = Modifier.size(150.dp)
             )

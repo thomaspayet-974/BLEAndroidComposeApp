@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -32,7 +33,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.thomaspayet.bleapp.data.ble.BluetoothLEManager
 import com.thomaspayet.bleapp.screens.ChartsScreen
 import com.thomaspayet.bleapp.screens.HomeScreen
 import com.thomaspayet.bleapp.screens.ble.BluetoothLEDeviceDetailScreen
@@ -40,6 +40,7 @@ import com.thomaspayet.bleapp.screens.ble.BluetoothLEScreen
 import com.thomaspayet.bleapp.screens.ble.BluetoothLEViewModel
 import com.thomaspayet.bleapp.ui.components.TopAppBar
 import com.thomaspayet.bleapp.ui.theme.BLEAppTheme
+import com.thomaspayet.bleapp.R
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -103,14 +104,14 @@ fun BleApp() {
         val title = if (currentScreen == BluetoothLEDeviceDetail) {
             currentBackStack?.arguments?.getString(
                 BluetoothLEDeviceDetail.DEVICE_NAME_ARG
-            ) ?: "Unknown"
+            ) ?: stringResource(R.string.unknown_ble_device)
         } else {
             currentScreen.screenTitle
         }
         val subtitle = if (currentScreen == BluetoothLEDeviceDetail) {
             currentBackStack?.arguments?.getString(
                 BluetoothLEDeviceDetail.DEVICE_ADDR_ARG
-            ) ?: ""
+            ) ?: stringResource(R.string.empty_string)
         } else {
             currentScreen.screenSubTitle
         }
@@ -139,7 +140,7 @@ fun BleApp() {
                             ) {
                                 Image(
                                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                    contentDescription = "Go back to Home screen"
+                                    contentDescription = stringResource(R.string.back_action)
                                 )
                             }
                         }
@@ -173,6 +174,7 @@ fun BleAppNavHost(
     navController: NavHostController
 ) {
     val isDevConnected by bleViewModel.isConnectedToDeviceFlow.collectAsStateWithLifecycle()
+    val unknownBleDevice = stringResource(R.string.unknown_ble_device)
     NavHost(
         navController = navController,
         startDestination = Home.route,
@@ -196,7 +198,7 @@ fun BleAppNavHost(
                         navController.navigateWithTwoArguments(
                             BluetoothLEDeviceDetail.route,
                             bleDevice.address,
-                            bleDevice.name ?: "Unknown"
+                            bleDevice.name ?: unknownBleDevice
                         )
                     }
                 }
@@ -215,7 +217,7 @@ fun BleAppNavHost(
                 )
             BluetoothLEDeviceDetailScreen(
                 bleViewModel = bleViewModel,
-                deviceAddr = bleDeviceAddr ?: "",
+                deviceAddr = bleDeviceAddr ?: stringResource(R.string.empty_string),
                 isDeviceConnected = isDevConnected,
                 onClickDisconnect = {
                     bleViewModel.disconnect()

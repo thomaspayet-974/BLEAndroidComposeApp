@@ -14,9 +14,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.thomaspayet.bleapp.R
 import com.thomaspayet.bleapp.data.ble.BluetoothLEManager
 import com.thomaspayet.bleapp.ui.components.ListElement
 
@@ -24,7 +26,7 @@ import com.thomaspayet.bleapp.ui.components.ListElement
 @Composable
 fun BluetoothLEDeviceDetailScreen(
     bleViewModel : BluetoothLEViewModel = viewModel(),
-    deviceAddr: String = "00:00:00:00:00:00",
+    deviceAddr: String = stringResource(R.string.default_ble_device_address),
     isDeviceConnected: Boolean = BluetoothLEManager.currentDevice != null,
     onClickDisconnect: () -> Unit = {}
 ) {
@@ -52,9 +54,9 @@ fun BluetoothLEDeviceDetailScreen(
                 Row(horizontalArrangement = Arrangement.SpaceBetween) {
                     Image(
                         imageVector = Icons.Filled.BluetoothDisabled,
-                        contentDescription = "Disconnect BluetoothLE device"
+                        contentDescription = stringResource(R.string.disconnect_ble_device)
                     )
-                    Text(text = "Disconnect")
+                    Text(text = stringResource(R.string.disconnect_button))
                 }
             }
         }
