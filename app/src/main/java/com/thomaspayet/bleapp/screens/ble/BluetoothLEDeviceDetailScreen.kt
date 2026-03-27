@@ -37,27 +37,42 @@ fun BluetoothLEDeviceDetailScreen(
     if (selectedDevice == null) {
         onClickDisconnect()
     } else {
-        Column {
-            //TODO: ajouter des widgets pour chaque Characteristic
-            ListElement(
-                title = selectedDevice.name,
-                content = selectedDevice.address,
-                image =
-                    if (isDeviceConnected) Icons.Filled.BluetoothConnected
-                    else Icons.Filled.BluetoothDisabled,
-                onClick = onClickDisconnect
-            )
-            Button(
-                onClick = onClickDisconnect,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            ) {
-                Row(horizontalArrangement = Arrangement.SpaceBetween) {
-                    Image(
-                        imageVector = Icons.Filled.BluetoothDisabled,
-                        contentDescription = stringResource(R.string.disconnect_ble_device)
-                    )
-                    Text(text = stringResource(R.string.disconnect_button))
-                }
+        BluetoothLEDeviceDetailContent(
+            deviceName = selectedDevice.name ?: stringResource(R.string.unknown_ble_device),
+            deviceAddress = selectedDevice.address,
+            isDeviceConnected = isDeviceConnected,
+            onClickDisconnect = onClickDisconnect
+        )
+    }
+}
+
+@Composable
+private fun BluetoothLEDeviceDetailContent(
+    deviceName: String = "N/A",
+    deviceAddress: String,
+    isDeviceConnected: Boolean,
+    onClickDisconnect: () -> Unit
+) {
+    Column {
+        //TODO: ajouter des widgets pour chaque Characteristic
+        ListElement(
+            title = deviceName,
+            content = deviceAddress,
+            image =
+                if (isDeviceConnected) Icons.Filled.BluetoothConnected
+                else Icons.Filled.BluetoothDisabled,
+            onClick = onClickDisconnect
+        )
+        Button(
+            onClick = onClickDisconnect,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        ) {
+            Row(horizontalArrangement = Arrangement.SpaceBetween) {
+                Image(
+                    imageVector = Icons.Filled.BluetoothDisabled,
+                    contentDescription = stringResource(R.string.disconnect_ble_device)
+                )
+                Text(text = stringResource(R.string.disconnect_button))
             }
         }
     }
@@ -66,5 +81,10 @@ fun BluetoothLEDeviceDetailScreen(
 @Preview(showBackground = true)
 @Composable
 private fun BluetoothLEDeviceDetailScreenPreview() {
-    BluetoothLEDeviceDetailScreen()
+    BluetoothLEDeviceDetailContent(
+        deviceName = "Bluetooth device",
+        deviceAddress = "11:22:33:AA:BB:CC",
+        isDeviceConnected = true,
+        onClickDisconnect = {}
+    )
 }
